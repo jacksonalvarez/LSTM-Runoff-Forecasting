@@ -1,20 +1,31 @@
-Streamflow Data Processing Scripts
-This repository contains two Python scripts for processing and modeling streamflow data from the National Water Model (NWM) and the United States Geological Survey (USGS):
+# Streamflow Data Processing Scripts
 
-parse.py: Parses, validates, and merges raw NWM and USGS CSV files into a standardized format.
+This repository contains Python scripts for processing and modeling streamflow data from the **National Water Model (NWM)** and the **United States Geological Survey (USGS)**.
 
-model.py: (Assumed) Script for modeling or analysis using the merged data (details TBD).
+## Scripts Overview
 
-parse.py — Data Processing Pipeline
-Description
-parse.py processes raw CSV data from NWM and USGS sources, validates essential fields, infers missing metadata (like site numbers), and merges the datasets based on matching timestamps (DateTime). The merged data is saved as merged_data.csv.
+- `parse.py`: Parses, validates, and merges raw NWM and USGS CSV files into a standardized format.
+- `model.py`: (Planned) Performs analysis or modeling using the merged data.
 
-Expected Input
-Place your raw CSV files in the following folder structure:
+---
 
-bash
-Copy
-Edit
+## `parse.py` – Data Processing Pipeline
+
+### Description
+
+`parse.py` processes raw CSV files from both NWM and USGS sources by:
+
+- Validating essential columns.
+- Inferring missing site identifiers from file names if necessary.
+- Aligning time formats and removing invalid rows.
+- Merging datasets on the `DateTime` column.
+- Saving the merged result to a single CSV file.
+
+### Expected Input Format
+
+Place your raw CSV files into the following folder structure:
+
+```
 /your_project_directory/
 ├── parse.py
 ├── nwm_data/
@@ -23,54 +34,78 @@ Edit
 └── usgs_data/
     ├── sample_usgs_1.csv
     └── ...
-Example NWM Data (CSV)
-csv
-Copy
-Edit
+```
+
+#### Example NWM CSV
+
+```csv
 NWM_version_number,model_initialization_time,model_output_valid_time,streamflow_value,streamID
 v2.1,2021-05-21_00:00:00,2021-05-21_01:00:00,3.6499999184161434,20380357
-Example USGS Data (CSV)
-csv
-Copy
-Edit
+```
+
+#### Example USGS CSV
+
+```csv
 DateTime,USGSFlowValue,USGS_GageID
 2021-04-20 07:00:00+00:00,32,A
-Columns can also use site_no instead of USGS_GageID.
+```
 
-How to Run
-Update the nwm_folder, usgs_folder, and output_folder paths in the __main__ block of parse.py:
+> USGS files may use `site_no` instead of `USGS_GageID`.
 
-python
-Copy
-Edit
-nwm_folder = r"C:\Users\PWD\Desktop\nwm_data"
-usgs_folder = r"C:\Users\PWD\Desktop\usgs_data"
-output_folder = r"C:\Users\PWD\Desktop\processed_data"
-Then run the script:
+---
 
-bash
-Copy
-Edit
+### How to Run
+
+1. Edit the `__main__` section in `parse.py` to point to your data folders:
+
+```python
+nwm_folder = r"C:\path\to\nwm_data"
+usgs_folder = r"C:\path\to\usgs_data"
+output_folder = r"C:\path\to\output_folder"
+```
+
+2. Run the script:
+
+```bash
 python parse.py
-Output
-A file named merged_data.csv will be saved in your output_folder. It contains synchronized flow data from both NWM and USGS, merged on DateTime.
+```
 
-Output Format Example
-csv
-Copy
-Edit
+---
+
+### Output
+
+- The script creates a file called `merged_data.csv` in the specified `output_folder`.
+- This file contains synchronized flow data from NWM and USGS sources.
+
+#### Output Format Example
+
+```csv
 DateTime,streamflow,observed_flow
 2021-05-21 01:00:00,3.6499999184161434,32
-...
-model.py — Analysis / Modeling Script
-This script is expected to take the merged data (merged_data.csv) from parse.py and perform statistical analysis, modeling, or visualization (e.g., comparing modeled vs. observed flow).
+```
 
-Ensure merged_data.csv exists before running model.py.
+---
 
-Notes
-Timezones in USGS data are stripped for alignment with NWM time.
+## `model.py` – Analysis or Modeling (Planned)
 
-Files missing required fields will be skipped with a warning.
+This script is intended to use `merged_data.csv` for further analysis such as:
 
-Invalid or malformed timestamps are automatically dropped.
+- Statistical comparisons between modeled and observed flows.
+- Visualization of time series data.
+- Error metrics and performance evaluation.
 
+> Be sure to run `parse.py` first so that `merged_data.csv` is available.
+
+---
+
+## Notes
+
+- USGS timestamps may include timezone info; this is stripped during processing for consistency with NWM timestamps.
+- Files missing critical columns will be skipped.
+- Rows with invalid or missing `DateTime` values are dropped before merging.
+
+---
+
+## License
+
+This project is open-source and free to use under the MIT License.
