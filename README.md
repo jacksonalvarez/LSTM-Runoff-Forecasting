@@ -105,7 +105,3 @@ This script is intended to use `merged_data.csv` for further analysis such as:
 - Rows with invalid or missing `DateTime` values are dropped before merging.
 
 ---
-
-## License
-
-This project is open-source and free to use under the MIT License.
